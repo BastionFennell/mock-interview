@@ -3,13 +3,26 @@ const PostStateContext = React.createContext({} as any);
 const PostDispatchContext = React.createContext({} as any);
 
 enum actionTypes {
+  updateAuthors = 'updateAuthors',
   updatePosts = 'update',
 }
 
-function postReducer(state: any, action: { posts: any[]; type: actionTypes }) {
+function postReducer(
+  state: any,
+  action: { payload: any[]; type: actionTypes }
+) {
   switch (action.type) {
     case 'update': {
-      return action.posts;
+      return {
+        authors: state.authors,
+        posts: action.payload,
+      };
+    }
+    case 'updateAuthors': {
+      return {
+        authors: action.payload,
+        posts: state.posts,
+      };
     }
     default: {
       return state;
@@ -19,7 +32,10 @@ function postReducer(state: any, action: { posts: any[]; type: actionTypes }) {
 }
 
 function PostProvider({ children }: { children: React.ReactNode }): any {
-  const [state, dispatch] = React.useReducer(postReducer, { posts: [] });
+  const [state, dispatch] = React.useReducer(postReducer, {
+    authors: [],
+    posts: [],
+  });
   return (
     <PostStateContext.Provider value={state}>
       <PostDispatchContext.Provider value={dispatch}>
